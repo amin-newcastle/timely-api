@@ -3,15 +3,30 @@ const User = require('../models/User.model');
 // @desc    Get all users
 // @route   GET /api/v1/users
 // @access  Private
-exports.getUsers = (req, res) => {
-  res.status(200).json({ success: true, msg: 'Show all users' });
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json({ success: true, data: users });
+  } catch (e) {
+    res.status(400).json({ success: false, msg: e.message });
+  }
 };
 
 // @desc    Get single user
 // @route   GET /api/v1/users/:id
 // @access  Private
-exports.getUser = (req, res) => {
-  res.status(200).json({ success: true, msg: `Show user ${req.params.id}` });
+exports.getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(400).json({ success: false });
+    }
+
+    res.status(200).json({ success: true, data: user });
+  } catch (e) {
+    res.status(400).json({ success: false, msg: e.message });
+  }
 };
 
 // @desc    Create new user
