@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
-const connectDB = require('./server/config/db');
+const connectDB = require('./server/config/db.connection');
 
 // Load env vars
 dotenv.config({ path: 'server/config/config.env' });
@@ -13,6 +13,9 @@ connectDB();
 const users = require('./server/routes/users.routes');
 
 const app = express();
+
+// Body parser
+app.use(express.json());
 
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
