@@ -6,7 +6,7 @@ const User = require('../models/User.model');
 exports.getUsers = async (req, res) => {
   try {
     const users = await User.find();
-    res.status(200).json({ success: true, data: users });
+    res.status(200).json({ success: true, count: users.length, data: users });
   } catch (e) {
     res.status(400).json({ success: false, msg: e.message });
   }
@@ -44,13 +44,36 @@ exports.createUser = async (req, res) => {
 // @desc    Update user
 // @route   PUT /api/v1/users/:id
 // @access  Private
-exports.updateUser = (req, res) => {
-  res.status(200).json({ success: true, msg: `Update user ${req.params.id}` });
+exports.updateUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!user) {
+      return res.status(400).json({ success: false });
+    }
+
+    res.status(200).json({ success: true, data: user });
+  } catch (e) {
+    res.status(400).json({ success: false });
+  }
 };
 
 // @desc    Delete user
 // @route   DELETE /api/v1/users/:id
 // @access  Private
-exports.deleteUser = (req, res) => {
-  res.status(200).json({ success: true, msg: `Delete user ${req.params.id}` });
+exports.deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+
+    if (!user) {
+      return res.status(400).json({ success: false });
+    }
+
+    res.status(200).json({ success: true, data: {} });
+  } catch (e) {
+    res.status(400).json({ success: false });
+  }
 };
